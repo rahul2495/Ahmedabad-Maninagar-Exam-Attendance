@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maninagar Vidyapeeth - Attendance Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-10 text-center">
+            <h1 class="text-4xl font-bold text-indigo-700 mb-2">Maninagar Vidyapeeth</h1>
+            <p class="text-xl text-slate-500">Average Attendance Dashboard (April - May 2026)</p>
+        </header>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100 border-l-4 border-l-indigo-500">
+                <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Top Performing Batch</h3>
+                <p class="text-3xl font-bold text-slate-700 mt-2">AJ201MA <span class="text-lg text-emerald-500 font-medium">(83.00%)</span></p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100 border-l-4 border-l-emerald-500">
+                <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Average Attendance (All)</h3>
+                <p class="text-3xl font-bold text-slate-700 mt-2">59.87%</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100 border-l-4 border-l-rose-500">
+                <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Needs Improvement</h3>
+                <p class="text-3xl font-bold text-slate-700 mt-2">LN201MA <span class="text-lg text-rose-500 font-medium">(8.33%)</span></p>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+            <!-- Chart 1: Multiple Entry Batches -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+                <h2 class="text-xl font-semibold mb-4 text-slate-700">Average Attendance (Repeating Batches)</h2>
+                <div class="relative h-80">
+                    <canvas id="repeatingBatchesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 2: Single Entry Batches -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+                <h2 class="text-xl font-semibold mb-4 text-slate-700">Attendance (Single Entry Batches)</h2>
+                <div class="relative h-80">
+                    <canvas id="singleBatchesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Combined Bar Chart -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 mb-10">
+            <h2 class="text-xl font-semibold mb-4 text-slate-700">Overall Batch Comparison</h2>
+            <div class="relative h-96">
+                <canvas id="allBatchesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6 overflow-hidden">
+            <h2 class="text-xl font-semibold mb-4 text-slate-700">Data Summary Table</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
+                            <th class="py-3 px-4 font-semibold">Batch Name</th>
+                            <th class="py-3 px-4 font-semibold">Category</th>
+                            <th class="py-3 px-4 font-semibold text-right">Average Attendance (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-700">
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">AJ201MA</td><td class="py-3 px-4"><span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">Repeating</span></td><td class="py-3 px-4 text-right font-medium">83.00%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">UF101EA</td><td class="py-3 px-4"><span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">Repeating</span></td><td class="py-3 px-4 text-right font-medium">82.78%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">LN101EA</td><td class="py-3 px-4"><span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">Repeating</span></td><td class="py-3 px-4 text-right font-medium">81.96%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">UP201EA</td><td class="py-3 px-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">Single Entry</span></td><td class="py-3 px-4 text-right font-medium">77.78%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">LJ101MA</td><td class="py-3 px-4"><span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">Repeating</span></td><td class="py-3 px-4 text-right font-medium">76.96%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">NF101EA</td><td class="py-3 px-4"><span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">Repeating</span></td><td class="py-3 px-4 text-right font-medium">71.41%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">UF201ES</td><td class="py-3 px-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">Single Entry</span></td><td class="py-3 px-4 text-right font-medium">68.75%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">NF201ES</td><td class="py-3 px-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">Single Entry</span></td><td class="py-3 px-4 text-right font-medium">68.42%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">LJ201ES</td><td class="py-3 px-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">Single Entry</span></td><td class="py-3 px-4 text-right font-medium">65.91%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">LN102EA</td><td class="py-3 px-4"><span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">Repeating</span></td><td class="py-3 px-4 text-right font-medium">65.72%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">LJ101EA</td><td class="py-3 px-4"><span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">Repeating</span></td><td class="py-3 px-4 text-right font-medium">63.10%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">LN101MA</td><td class="py-3 px-4"><span class="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">Repeating</span></td><td class="py-3 px-4 text-right font-medium">58.20%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">YN501MA</td><td class="py-3 px-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">Single Entry</span></td><td class="py-3 px-4 text-right font-medium text-amber-600">47.22%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">YN301MA</td><td class="py-3 px-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">Single Entry</span></td><td class="py-3 px-4 text-right font-medium text-rose-500">34.86%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">LN201EA</td><td class="py-3 px-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">Single Entry</span></td><td class="py-3 px-4 text-right font-medium text-rose-500">29.03%</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4">LN202EA</td><td class="py-3 px-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">Single Entry</span></td><td class="py-3 px-4 text-right font-medium text-rose-500">22.50%</td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-3 px-4">LN201MA</td><td class="py-3 px-4"><span class="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs">Single Entry</span></td><td class="py-3 px-4 text-right font-medium text-rose-600">8.33%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart Configuration defaults
+        Chart.defaults.font.family = "'Poppins', sans-serif";
+        Chart.defaults.color = '#64748b';
+
+        // 1. Repeating Batches Chart (Bar)
+        const ctxRepeating = document.getElementById('repeatingBatchesChart').getContext('2d');
+        new Chart(ctxRepeating, {
+            type: 'bar',
+            data: {
+                labels: ['AJ201MA', 'UF101EA', 'LN101EA', 'LJ101MA', 'NF101EA', 'LN102EA', 'LJ101EA', 'LN101MA'],
+                datasets: [{
+                    label: 'Average %',
+                    data: [83.00, 82.78, 81.96, 76.96, 71.41, 65.72, 63.10, 58.20],
+                    backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                    borderRadius: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true, max: 100 } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // 2. Single Entry Batches Chart (Horizontal Bar)
+        const ctxSingle = document.getElementById('singleBatchesChart').getContext('2d');
+        new Chart(ctxSingle, {
+            type: 'bar',
+            data: {
+                labels: ['UP201EA', 'UF201ES', 'NF201ES', 'LJ201ES', 'YN501MA', 'YN301MA', 'LN201EA', 'LN202EA', 'LN201MA'],
+                datasets: [{
+                    label: 'Attendance %',
+                    data: [77.78, 68.75, 68.42, 65.91, 47.22, 34.86, 29.03, 22.50, 8.33],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(16, 185, 129, 0.8)', 'rgba(16, 185, 129, 0.8)',
+                        'rgba(245, 158, 11, 0.8)', 'rgba(244, 63, 94, 0.8)', 'rgba(244, 63, 94, 0.8)', 'rgba(244, 63, 94, 0.8)', 'rgba(225, 29, 72, 0.9)'
+                    ],
+                    borderRadius: 6,
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { x: { beginAtZero: true, max: 100 } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // 3. All Batches Overview Chart
+        const ctxAll = document.getElementById('allBatchesChart').getContext('2d');
+        new Chart(ctxAll, {
+            type: 'line',
+            data: {
+                labels: ['AJ201MA', 'UF101EA', 'LN101EA', 'UP201EA', 'LJ101MA', 'NF101EA', 'UF201ES', 'NF201ES', 'LJ201ES', 'LN102EA', 'LJ101EA', 'LN101MA', 'YN501MA', 'YN301MA', 'LN201EA', 'LN202EA', 'LN201MA'],
+                datasets: [{
+                    label: 'Attendance Trend (%)',
+                    data: [83.00, 82.78, 81.96, 77.78, 76.96, 71.41, 68.75, 68.42, 65.91, 65.72, 63.10, 58.20, 47.22, 34.86, 29.03, 22.50, 8.33],
+                    borderColor: 'rgba(99, 102, 241, 1)',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderWidth: 3,
+                    pointBackgroundColor: 'white',
+                    pointBorderColor: 'rgba(99, 102, 241, 1)',
+                    pointRadius: 5,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true, max: 100 } }
+            }
+        });
+    </script>
+</body>
+</html>
